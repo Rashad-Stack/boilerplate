@@ -1,16 +1,20 @@
 import { Button, Checkbox, Input, InputIcon, Label } from "keep-react";
 import { Envelope, Eye, EyeClosed, Lock } from "phosphor-react";
 import { useState } from "react";
-import { Link, useFetcher } from "react-router-dom";
+import { Link, useFetcher, useLocation } from "react-router-dom";
 import FormAlert from "./FormAlert";
 import Loading from "./Loading";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const fetcher = useFetcher();
+  const { state } = useLocation();
 
   return (
-    <fetcher.Form className="space-y-4" method="post" action="/auth/login">
+    <fetcher.Form
+      className="space-y-4"
+      method="post"
+      action={`/auth/login?from=${state?.from || "/"}`}>
       {fetcher.state === "submitting" && <Loading />}
       <div className="mb-4">
         <h3 className="text-gray-800 text-3xl font-extrabold">Sign in</h3>

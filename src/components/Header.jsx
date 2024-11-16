@@ -12,11 +12,12 @@ import {
   NavbarList,
 } from "keep-react";
 import { HiBars3CenterLeft } from "react-icons/hi2";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { auth } from "../firebase/config";
 import Profile from "./Profile";
 
 export default function Header() {
+  const { state } = useLocation();
   const user = auth?.currentUser;
 
   return (
@@ -99,7 +100,9 @@ export default function Header() {
               <div className="mb-10 space-y-3">
                 {user ? (
                   <NavbarItem active={true} className="text-center">
-                    <NavLink to="/auth/logout">Logout</NavLink>
+                    <NavLink to={`/auth/logout?from=${state?.from || "/"}`}>
+                      Logout
+                    </NavLink>
                   </NavbarItem>
                 ) : (
                   <>

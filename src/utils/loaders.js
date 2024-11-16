@@ -10,10 +10,13 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
+import { toast } from "keep-react";
 import { json, redirect } from "react-router-dom";
 import { auth } from "../firebase/config";
 
 export const login = async ({ request }) => {
+  const url = new URL(request.url);
+  const searchTerm = url.searchParams.get("from") || "/";
   try {
     const formData = await request.formData();
     const email = formData.get("email");
@@ -27,7 +30,7 @@ export const login = async ({ request }) => {
     await signInWithEmailAndPassword(auth, email, password);
 
     // Redirect to the previous route or a default route
-    return redirect("/");
+    return redirect(searchTerm);
   } catch (error) {
     console.error(error);
     return {
@@ -37,6 +40,8 @@ export const login = async ({ request }) => {
 };
 
 export const register = async ({ request }) => {
+  const url = new URL(request.url);
+  const searchTerm = url.searchParams.get("from") || "/";
   try {
     const formData = await request.formData();
     const name = formData.get("name");
@@ -54,22 +59,24 @@ export const register = async ({ request }) => {
       displayName: name,
     });
 
-    return redirect("/");
+    return redirect(searchTerm);
   } catch (error) {
     console.error(error);
     return json({ error: error.message }, { status: 400 });
   }
 };
 
-export const logout = async () => {
+export const logout = async ({ request }) => {
+  const url = new URL(request.url);
+  const searchTerm = url.searchParams.get("from") || "/";
+
   try {
     await signOut(auth);
-    return redirect("/auth/login");
+    return redirect(searchTerm);
   } catch (error) {
     console.error(error);
-    return {
-      error: error.message,
-    };
+    toast.error(error.message);
+    return redirect(searchTerm);
   }
 };
 
@@ -89,28 +96,35 @@ export const loadUser = async () => {
   });
 };
 
-export const loginWithGoogle = async () => {
+export const loginWithGoogle = async ({ request }) => {
+  const url = new URL(request.url);
+  const searchTerm = url.searchParams.get("from") || "/";
   const provider = new GoogleAuthProvider();
 
   try {
     await signInWithPopup(auth, provider);
     await setPersistence(auth, browserLocalPersistence);
-    return redirect("/");
+
+    return redirect(searchTerm);
   } catch (error) {
     console.error(error);
+    toast.error(error.message);
     return redirect("/auth/login");
   }
 };
 
-export const loginWithGithub = async () => {
+export const loginWithGithub = async ({ request }) => {
+  const url = new URL(request.url);
+  const searchTerm = url.searchParams.get("from") || "/";
   const provider = new GithubAuthProvider();
 
   try {
     await signInWithPopup(auth, provider);
     await setPersistence(auth, browserLocalPersistence);
-    return redirect("/");
+    return redirect(searchTerm);
   } catch (error) {
     console.error(error);
+    toast.error(error.message);
     return redirect("/auth/login");
   }
 };

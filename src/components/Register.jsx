@@ -1,14 +1,18 @@
 import { Button, Input, InputIcon, Label } from "keep-react";
 import { Envelope, Lock, User } from "phosphor-react";
-import { Link, useFetcher } from "react-router-dom";
+import { Link, useFetcher, useLocation } from "react-router-dom";
 import FormAlert from "./FormAlert";
 import Loading from "./Loading";
 
 export default function Register() {
   const fetcher = useFetcher();
+  const { state } = useLocation();
 
   return (
-    <fetcher.Form className="space-y-4" method="post" action="/auth/register">
+    <fetcher.Form
+      className="space-y-4"
+      method="post"
+      action={`/auth/register?from=${state?.from || "/"}`}>
       {fetcher.state === "submitting" && <Loading />}
       <div className="mb-4">
         <h3 className="text-gray-800 text-3xl font-extrabold">Register</h3>
